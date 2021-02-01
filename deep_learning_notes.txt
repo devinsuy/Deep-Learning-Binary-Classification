@@ -1,0 +1,144 @@
+---------------------------------
+Devin Suy : https://devinsuy.com/
+---------------------------------
+
+----------------------------
+Deep Learning General Notes:
+----------------------------
+
+Training Goal:
+	- Optimize weights
+	- Minimize loss function
+
+Layers:
+	- List of layers can be passed as arguments to model constructor
+		- EX: Sequential([layer_1, layer_2, layer_3, ...])
+		
+	- Input
+		- input_shape arg should be specified in constructor of first layer added to model
+	
+	- Hidden
+		- Dense (aka fully connected) where each node is fully connected
+			- Has edge to each other node 1 layer prev and 1 layer forward
+			
+		- Convolutional (image data)
+			- Has multiple filters geared towards detecting patterns
+				- Patterns in an image can represent edges, shapes, corners
+			- More sophisticated filters lie in deeper convolutional layers
+				- Can detect patterns like eyes, ears, facial structure, body shape, etc more complex as go deeper
+			- A filter is a matrix of predefined length and width (initializaed randomly)
+				- The filter will convolve across the images pixels in blocks (the size of the matrix)
+				- This process generates a transformed image highlighting edges/shapes in the image
+					- Each filter might do so with different colors, highlighting different parts of the image
+				
+		- Pooling
+		- Recurrent (time series data)
+		- Normalization
+		- etc
+		
+	- Output
+		- Result is activation(arg=weighted_sum_of_inputs)
+		- In a classification problem, this is the probability or confidence that an image is type x or type y
+
+
+Activation Function:
+	- Sigmoid [0,1]
+		- if low input val, low output value close to 0
+		- if high input val, high input val close to 1
+		- S curve graph: S(x) = e^x / e^(x+1)
+		
+	- Relu [0, x]
+		- All values <= 0 output 0
+		- Else output = input
+		- Straight line graph with slope 1, only in the +x,+y quadrant
+
+
+Learning Rate [0.01, 0.0001] reccommended
+	- Larger learning rate value risks overshooting the ideal optimization
+	- Too small a learning rate will take too long to train
+	- Typically requires testing and tuning to the specific model
+	
+	
+Weights:
+	- Each edge between nodes is a assigned a weight (between 0 and 1) that represent the strength of the connection
+	- Optimizing weights commonly done using stochastic gradient descent or variations of this technique
+		- Weights may start at random values and slowly reach optimal 
+		- Process happens alongside the minimization of the loss value 
+		
+	- Weight adjustment happens each epoch
+		
+		- val = Derivative of loss function with respect to the weight on a given edge is calculated
+		- val is multiplied by the learning rate 
+		- The val is subtracted from the weight on the respective edge, updating it, move to next epoch and repeat 
+	
+Loss:
+	- e is calculated as the output value for an input minus the value of the expected output
+		- The error is e passed to a loss function
+	
+	- EX Loss Function: Mean squared error
+		- Calculate this error value for each input, sum and square the value, divide by num of inputs
+
+
+3 sets:
+	- A single pass of data through the model is known as an EPOCH, process is repeated with same data 
+	- Training
+		- Each epoch weights are adjusted based on loss function 
+	- Validation
+		- Metric to see how welll generalization has occured, weights not adjusted when testing against validation
+	- Test
+		- Not given labels, final test for generalization to see if over/underfit (predictive ability in production)
+		
+
+Techniques
+	- Random Dropout (increase if overfitting, decrease if under)
+	- Complexity, # Hidden Layers (increase if over, decrease if under)
+		- Add more features
+	
+
+Predictions
+	- Call model.predict() and pass data, outputs np array of what the the model thinks is the probability of each category 
+
+
+Unsupervised Learning
+	- Use of clustering algorithms, classifications not know but can be seen to group 
+	- Autoencoder (Articial Neural Network)
+		- Purpose is to remove noise from the input by identifying features and reconstructing without the noise 
+		- Takes input and enncodes a compressed representation of it, latter can be fed to decoder to reconstruct the original input (as close as possible)
+		- Loss function is measuring how similar original and reconstructed version are
+
+
+Semisupervised Learning
+	- May have large dataset that is only partially labeled
+	- Begin by training model using all the labeled data
+		- Afterwards perform psuedolabeling where the unlabeled data is labeled using the model that was trained using the labeled data 
+		- After this all the data is "labeled" use the entire dataset now to train the model further 
+	
+	
+Data Augmentation
+	- Generate "new" data by transforming previous existing data 
+		- For image data, can be rotating or zooming the image randomly, mirror transform, or even vary color of image
+	- Done to increase size of data set (sample could be small and could be difficult to get more otherwise)
+	- Reduces overfitting since model is exposed to more labeled variations in training
+	
+
+One-hot Encoding:
+	- Transforms categorical labels (Cat or dog) into numerical vectors of 0 and 1
+		- Where length of vector is the number of classifications/categories in the model
+		- Each classification/category is assigned an index
+			- Each image will have a 1 at this index (the label) and 0s at every other index 
+			
+			
+Convolutional Neural Networks (Image processing)
+	- Handling the case where the data is not perfect
+	
+	- Object in image might not be centered (could be far left or far right)
+	
+	- Object also might not be isolated, many things could be in picture
+	
+	- Image is applied through layers of filters to remove other components or 
+		reduce image size while retaining and enchancing features
+		
+	- CNN can have randomly initialized filters, images are fed through each convolutional layer 
+		- Overtime feature extraction happens as the most ideal filters are learned 
+	
+	- Images can be further broken down by stacking convolutional layers on top of one another
